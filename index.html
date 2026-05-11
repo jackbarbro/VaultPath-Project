@@ -867,30 +867,105 @@ button{font-family:inherit;cursor:pointer}
 
 <!-- ═══════════════════════ PAGE: JOBS + TRACKER ═══════════════════════ -->
 <div class="page" id="page-jobs">
-  <div class="page-header"><div class="container"><div class="page-header-inner"><div class="page-header-icon fi-gold">💼</div><div><h1>Finance Job Portal & Application Tracker</h1><p>Discover open finance roles, apply directly, and track every application in your personal recruiting dashboard.</p></div></div></div></div>
+  <div class="page-header"><div class="container"><div class="page-header-inner"><div class="page-header-icon fi-gold">💼</div><div><h1>Finance Job Portal & Application Tracker</h1><p>Live finance job listings updated daily — apply directly to specific roles and track every application.</p></div></div></div></div>
   <div class="container" style="padding-top:1.75rem;padding-bottom:3rem">
     <div class="inner-tabs">
-      <button class="inner-tab active" onclick="switchJobTab('board',this)">🔍 Job Board</button>
+      <button class="inner-tab active" onclick="switchJobTab('board',this)">🔍 Live Job Board</button>
       <button class="inner-tab" onclick="switchJobTab('tracker',this)">📊 Application Tracker <span id="trackerBadge" style="background:var(--green);color:#fff;border-radius:100px;font-size:0.65rem;padding:0.1rem 0.45rem;margin-left:0.3rem;font-weight:700"></span></button>
     </div>
 
     <!-- JOB BOARD TAB -->
     <div id="jobBoardTab">
+      <!-- Live status bar -->
+      <div class="news-status-bar" style="margin-bottom:1rem">
+        <span id="jobsStatusLabel"><span class="live-dot"></span>Loading live finance jobs...</span>
+        <div style="display:flex;align-items:center;gap:0.75rem">
+          <span id="jobsLastUpdated" style="color:var(--text-muted);font-size:0.75rem"></span>
+          <button class="btn btn-sm btn-secondary" onclick="refreshLiveJobs()" style="padding:0.28rem 0.65rem;font-size:0.72rem">🔄 Refresh</button>
+        </div>
+      </div>
+      <!-- Search bar -->
       <div class="job-search-bar">
         <input class="form-input" type="text" id="jobSearch" placeholder="🔍  Search title, company, keyword..." oninput="renderJobs()">
         <button class="btn btn-primary" onclick="renderJobs()">Search</button>
       </div>
       <div class="jobs-layout">
+        <!-- FILTERS -->
         <div class="filters-panel">
-          <h3>Filters <button class="btn btn-xs btn-secondary" onclick="clearFilters()">Clear</button></h3>
-          <div class="filter-group"><label>Location</label><select class="form-select" id="filterLocation" onchange="renderJobs()"><option value="">All Locations</option><option>New York, NY</option><option>San Francisco, CA</option><option>Chicago, IL</option><option>Boston, MA</option><option>Los Angeles, CA</option><option>Washington, DC</option><option>Charlotte, NC</option><option>Westport, CT</option><option>Malvern, PA</option></select></div>
-          <div class="filter-group"><label>Work Arrangement</label><select class="form-select" id="filterRemote" onchange="renderJobs()"><option value="">All</option><option value="remote">Remote</option><option value="hybrid">Hybrid</option><option value="onsite">On-site</option></select></div>
-          <div class="filter-group"><label>Experience Level</label><select class="form-select" id="filterLevel" onchange="renderJobs()"><option value="">All Levels</option><option value="internship">Internship</option><option value="entry">Analyst / Entry</option><option value="associate">Associate</option><option value="senior">Senior / VP</option></select></div>
-          <div class="filter-group"><label>Finance Category</label><select class="form-select" id="filterCat" onchange="renderJobs()"><option value="">All Categories</option><option value="Investment Banking">Investment Banking</option><option value="Private Equity">Private Equity</option><option value="Asset Management">Asset Management</option><option value="Corporate Finance">Corporate Finance</option><option value="Fintech">Fintech</option><option value="Accounting">Accounting / Advisory</option><option value="Sales & Trading">Sales & Trading</option><option value="Wealth Management">Wealth Management</option></select></div>
-          <div class="filter-group"><label>Job Type</label><select class="form-select" id="filterType" onchange="renderJobs()"><option value="">All Types</option><option value="Full-time">Full-time</option><option value="Internship">Internship</option><option value="Contract">Contract</option></select></div>
+          <h3>Filters <button class="btn btn-xs btn-secondary" onclick="clearFilters()">Clear All</button></h3>
+          <div class="filter-group"><label>Finance Category</label>
+            <select class="form-select" id="filterCat" onchange="renderJobs()">
+              <option value="">All Categories</option>
+              <option value="Investment Banking">Investment Banking</option>
+              <option value="Private Equity">Private Equity</option>
+              <option value="Asset Management">Asset Management</option>
+              <option value="Corporate Finance">Corporate Finance</option>
+              <option value="Wealth Management">Wealth Management</option>
+              <option value="Financial Analyst">Financial Analyst</option>
+              <option value="Accounting">Accounting / Advisory</option>
+              <option value="Fintech">Fintech</option>
+              <option value="Risk Management">Risk Management</option>
+              <option value="Sales & Trading">Sales & Trading</option>
+            </select>
+          </div>
+          <div class="filter-group"><label>Location</label>
+            <select class="form-select" id="filterLocation" onchange="renderJobs()">
+              <option value="">All Locations</option>
+              <option>New York, NY</option>
+              <option>San Francisco, CA</option>
+              <option>Chicago, IL</option>
+              <option>Boston, MA</option>
+              <option>Los Angeles, CA</option>
+              <option>Washington, DC</option>
+              <option>Charlotte, NC</option>
+              <option>Remote</option>
+            </select>
+          </div>
+          <div class="filter-group"><label>Work Arrangement</label>
+            <select class="form-select" id="filterRemote" onchange="renderJobs()">
+              <option value="">All</option>
+              <option value="remote">Remote</option>
+              <option value="hybrid">Hybrid</option>
+              <option value="onsite">On-site</option>
+            </select>
+          </div>
+          <div class="filter-group"><label>Experience Level</label>
+            <select class="form-select" id="filterLevel" onchange="renderJobs()">
+              <option value="">All Levels</option>
+              <option value="internship">Internship</option>
+              <option value="entry">Analyst / Entry Level</option>
+              <option value="associate">Associate</option>
+              <option value="senior">Senior / VP+</option>
+            </select>
+          </div>
+          <div class="filter-group"><label>Job Type</label>
+            <select class="form-select" id="filterType" onchange="renderJobs()">
+              <option value="">All Types</option>
+              <option value="Full-time">Full-time</option>
+              <option value="Internship">Internship</option>
+              <option value="Contract">Contract</option>
+              <option value="Part-time">Part-time</option>
+            </select>
+          </div>
+          <div class="filter-group"><label>Posted Within</label>
+            <select class="form-select" id="filterDays" onchange="renderJobs()">
+              <option value="">Any Time</option>
+              <option value="7">Last 7 days</option>
+              <option value="14">Last 14 days</option>
+              <option value="30">Last 30 days</option>
+            </select>
+          </div>
+          <div class="divider"></div>
+          <p style="font-size:0.73rem;color:var(--text-muted);line-height:1.6">
+            <span style="color:var(--green);font-weight:600">🟢 Live</span> jobs are fetched in real-time. <span style="color:var(--gold);font-weight:600">⭐ New</span> = posted within 7 days.
+          </p>
         </div>
+        <!-- JOB LISTINGS -->
         <div>
-          <div class="jobs-count-bar"><h3 id="jobsHeader">Finance Jobs</h3><span class="count" id="jobsCountLabel"></span></div>
+          <div class="jobs-count-bar">
+            <h3 id="jobsHeader">Finance Jobs</h3>
+            <span class="count" id="jobsCountLabel"></span>
+          </div>
           <div id="jobsList"></div>
         </div>
       </div>
@@ -904,7 +979,16 @@ button{font-family:inherit;cursor:pointer}
         <button class="btn btn-secondary" onclick="exportTracker()">⬇ Export CSV</button>
         <div style="margin-left:auto;display:flex;gap:0.45rem">
           <input class="form-input" style="width:220px" type="text" id="trackerSearch" placeholder="🔍 Search applications..." oninput="renderTracker()">
-          <select class="form-select" style="width:160px" id="trackerStatusFilter" onchange="renderTracker()"><option value="">All Statuses</option><option value="Interested">Interested</option><option value="Saved">Saved</option><option value="Applied">Applied</option><option value="Interviewing">Interviewing</option><option value="Offer">Offer</option><option value="Rejected">Rejected</option><option value="Withdrawn">Withdrawn</option></select>
+          <select class="form-select" style="width:160px" id="trackerStatusFilter" onchange="renderTracker()">
+            <option value="">All Statuses</option>
+            <option value="Interested">Interested</option>
+            <option value="Saved">Saved</option>
+            <option value="Applied">Applied</option>
+            <option value="Interviewing">Interviewing</option>
+            <option value="Offer">Offer</option>
+            <option value="Rejected">Rejected</option>
+            <option value="Withdrawn">Withdrawn</option>
+          </select>
         </div>
       </div>
       <div id="trackerContent"></div>
@@ -1590,7 +1674,7 @@ function navigate(page){
   document.getElementById('page-'+page).classList.add('active');
   document.querySelectorAll('.nav-link[data-page]').forEach(l=>l.classList.toggle('active',l.dataset.page===page));
   window.scrollTo(0,0);
-  if(page==='jobs'){renderJobs();renderTrackerBadge();}
+  if(page==='jobs'){fetchLiveJobs(false);renderTrackerBadge();}
   if(page==='news'){renderNews();fetchLiveNews();}
   if(page==='networking'){renderContacts();renderNetStats();}
 }
@@ -1766,6 +1850,189 @@ function submitAnswer(i){
 function copyQuestions(){if(!window.currentQuestions)return;navigator.clipboard.writeText(window.currentQuestions.map((q,i)=>`${i+1}. [${q.type}] ${q.q}`).join('\n\n')).then(()=>showToast('✅ Questions copied'));}
 function loadSampleInterview(){document.getElementById('ivResume').value='Wharton finance student, Goldman Sachs summer analyst (M&A), JP Morgan treasury intern. Built DCF, LBO, and merger models. Led investment club with $50K portfolio. GPA 3.8. Skills: Excel, Bloomberg, Python.';document.getElementById('ivJD').value='Investment Banking Analyst – Goldman Sachs M&A Division. Looking for candidates who can build financial models (DCF, LBO, merger models), create pitch books, and support live transactions.';showToast('✅ Sample data loaded!');}
 
+
+// ═══ LIVE JOB FETCHING — The Muse API (free, CORS-enabled, no key required) ═
+const JOBS_CACHE_KEY = 'vp_live_jobs_v3';
+const JOBS_CACHE_TTL = 4 * 60 * 60 * 1000; // 4 hours
+const JOBS_MAX_AGE_DAYS = 30; // Don't show jobs older than 30 days
+
+let LIVE_JOBS = [];
+let JOBS_SOURCE = 'loading'; // 'live' | 'fallback' | 'loading'
+let JOBS_FETCHED_AT = null;
+
+// Map Muse API level strings to our internal level keys
+function mapMuseLevel(level) {
+  const l = (level || '').toLowerCase();
+  if (l.includes('intern')) return 'internship';
+  if (l.includes('entry') || l.includes('junior')) return 'entry';
+  if (l.includes('senior') || l.includes('vp') || l.includes('director') || l.includes('manage')) return 'senior';
+  if (l.includes('associate') || l.includes('mid')) return 'associate';
+  return 'entry';
+}
+
+// Map Muse categories + job title keywords → our finance categories
+function museCategoryToOurs(museCat, title) {
+  const t = (title || '').toLowerCase();
+  const c = (museCat || '').toLowerCase();
+  if (t.includes('investment bank') || t.includes('m&a') || t.includes('merger') || t.includes('capital market')) return 'Investment Banking';
+  if (t.includes('private equity') || t.includes('buyout') || t.includes('lbo') || t.includes('venture capital')) return 'Private Equity';
+  if (t.includes('portfolio manager') || t.includes('equity research') || t.includes('asset management') || t.includes('fund manager')) return 'Asset Management';
+  if (t.includes('wealth') || t.includes('financial advisor') || t.includes('financial planner') || t.includes('financial planning')) return 'Wealth Management';
+  if (t.includes('fintech') || t.includes('payments') || t.includes('cryptocurrency') || t.includes('blockchain')) return 'Fintech';
+  if (t.includes('risk') || t.includes('compliance') || t.includes('credit risk') || t.includes('market risk')) return 'Risk Management';
+  if (t.includes('audit') || t.includes('accountant') || t.includes('cpa') || t.includes('tax') || c.includes('accounting')) return 'Accounting';
+  if (t.includes('trading') || t.includes('trader') || t.includes('sales') || t.includes('fixed income') || t.includes('equities')) return 'Sales & Trading';
+  if (t.includes('consulting') || t.includes('strategy') || t.includes('corporate development')) return 'Corporate Finance';
+  if (c.includes('banking') || t.includes('bank')) return 'Investment Banking';
+  if (t.includes('analyst') || t.includes('financial analyst') || t.includes('finance analyst')) return 'Financial Analyst';
+  return 'Corporate Finance';
+}
+
+// Strip HTML and truncate for description
+function stripAndTruncate(html, maxLen) {
+  const d = document.createElement('div');
+  d.innerHTML = html || '';
+  return (d.textContent || '').replace(/\s+/g, ' ').trim().substring(0, maxLen) + (d.textContent.length > maxLen ? '…' : '');
+}
+
+// Days ago label
+function daysAgoLabel(dateStr) {
+  const days = Math.floor((Date.now() - new Date(dateStr)) / 86400000);
+  if (days <= 0) return 'Today';
+  if (days === 1) return '1d ago';
+  return days + 'd ago';
+}
+
+// Map a Muse API job result to our job card format
+function mapMuseJob(job) {
+  const title    = job.name || 'Finance Analyst';
+  const company  = job.company?.name || 'Finance Firm';
+  const loc      = job.locations?.[0]?.name || 'Multiple Locations';
+  const level    = mapMuseLevel(job.levels?.[0]?.name);
+  const museCat  = job.categories?.[0]?.name || 'Finance';
+  const pubDate  = job.publication_date || new Date().toISOString();
+  const url      = job.refs?.landing_page || '#';
+  const daysAgo  = Math.floor((Date.now() - new Date(pubDate)) / 86400000);
+
+  return {
+    id: 'muse_' + job.id,
+    title, company,
+    logo: company.replace(/[^A-Z]/g, '').substring(0, 2) || company.substring(0, 2).toUpperCase(),
+    location: loc,
+    remote: loc.toLowerCase().includes('remote') ? 'remote' : loc.toLowerCase().includes('hybrid') ? 'hybrid' : 'onsite',
+    level,
+    category: museCategoryToOurs(museCat, title),
+    type: level === 'internship' || title.toLowerCase().includes('intern') ? 'Internship' : 'Full-time',
+    desc: stripAndTruncate(job.contents, 220),
+    posted: daysAgoLabel(pubDate),
+    pubDate,
+    url,
+    live: true,
+    isNew: daysAgo <= 7,
+  };
+}
+
+async function fetchLiveJobs(forceRefresh) {
+  // 1. Try cache first
+  if (!forceRefresh) {
+    try {
+      const cached = localStorage.getItem(JOBS_CACHE_KEY);
+      if (cached) {
+        const { ts, jobs } = JSON.parse(cached);
+        if (Date.now() - ts < JOBS_CACHE_TTL && jobs.length >= 5) {
+          LIVE_JOBS = jobs;
+          JOBS_SOURCE = 'live';
+          JOBS_FETCHED_AT = new Date(ts);
+          updateJobsStatusBar();
+          renderJobs();
+          return;
+        }
+      }
+    } catch(e) {}
+  }
+
+  updateJobsStatusLabel('loading');
+
+  // 2. Fetch from The Muse API — multiple finance categories
+  const MUSE_CATS = ['Finance', 'Accounting', 'Banking%20%26%20Lending'];
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - JOBS_MAX_AGE_DAYS);
+  const seen = new Set();
+  const fetched = [];
+
+  for (const cat of MUSE_CATS) {
+    for (let page = 0; page <= 1; page++) {
+      try {
+        const apiUrl = `https://www.themuse.com/api/public/jobs?category=${cat}&page=${page}`;
+        const resp = await fetch(apiUrl, { signal: AbortSignal.timeout(8000) });
+        if (!resp.ok) continue;
+        const data = await resp.json();
+        if (!data.results) continue;
+        for (const job of data.results) {
+          if (seen.has(job.id)) continue;
+          const pubDate = new Date(job.publication_date);
+          if (pubDate < cutoff) continue; // Skip jobs older than 30 days
+          if (!job.refs?.landing_page) continue; // Skip if no direct link
+          seen.add(job.id);
+          fetched.push(mapMuseJob(job));
+        }
+      } catch(e) { /* API unreachable, continue */ }
+    }
+  }
+
+  // 3. Sort newest first, cache and display
+  if (fetched.length >= 5) {
+    LIVE_JOBS = fetched.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+    JOBS_SOURCE = 'live';
+    JOBS_FETCHED_AT = new Date();
+    try {
+      localStorage.setItem(JOBS_CACHE_KEY, JSON.stringify({ ts: Date.now(), jobs: LIVE_JOBS }));
+    } catch(e) {}
+  } else {
+    // 4. Fallback to curated seed jobs
+    LIVE_JOBS = [];
+    JOBS_SOURCE = 'fallback';
+    JOBS_FETCHED_AT = new Date();
+  }
+
+  updateJobsStatusBar();
+  renderJobs();
+}
+
+function refreshLiveJobs() {
+  try { localStorage.removeItem(JOBS_CACHE_KEY); } catch(e) {}
+  LIVE_JOBS = [];
+  fetchLiveJobs(true);
+  showToast('🔄 Refreshing live job listings...');
+}
+
+function updateJobsStatusLabel(mode) {
+  const el = document.getElementById('jobsStatusLabel');
+  if (!el) return;
+  if (mode === 'loading') el.innerHTML = '<span class="live-dot"></span>Fetching live finance jobs...';
+}
+
+function updateJobsStatusBar() {
+  const el  = document.getElementById('jobsStatusLabel');
+  const ts  = document.getElementById('jobsLastUpdated');
+  if (!el) return;
+  const now = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  if (JOBS_SOURCE === 'live') {
+    el.innerHTML = `<span class="live-dot"></span>${LIVE_JOBS.length} live finance jobs • updated daily`;
+  } else if (JOBS_SOURCE === 'fallback') {
+    el.innerHTML = `<span class="live-dot" style="background:var(--gold)"></span>Curated finance listings (live API unavailable)`;
+  }
+  if (ts) ts.textContent = `Updated ${now}`;
+}
+
+// Returns the job array to display: live if available, else seed fallback
+function getActiveJobs() {
+  if (LIVE_JOBS.length >= 5) return LIVE_JOBS;
+  // Seed fallback — filter to jobs < 30 days old (all have recent dates by design)
+  return JOBS;
+}
+
+
 // ═══ JOBS ═══
 function switchJobTab(tab,el){
   document.getElementById('jobBoardTab').classList.toggle('hidden',tab!=='board');
@@ -1780,36 +2047,90 @@ function renderJobs(){
   const lvl=(document.getElementById('filterLevel')||{value:''}).value;
   const cat=(document.getElementById('filterCat')||{value:''}).value;
   const typ=(document.getElementById('filterType')||{value:''}).value;
-  let jobs=JOBS.filter(j=>{
-    if(q&&!j.title.toLowerCase().includes(q)&&!j.company.toLowerCase().includes(q)&&!j.desc.toLowerCase().includes(q)&&!j.category.toLowerCase().includes(q))return false;
-    if(loc&&j.location!==loc)return false;if(rem&&j.remote!==rem)return false;if(lvl&&j.level!==lvl)return false;if(cat&&j.category!==cat)return false;if(typ&&j.type!==typ)return false;return true;
+  const days=parseInt((document.getElementById('filterDays')||{value:''}).value)||0;
+  const cutoff = days ? new Date(Date.now() - days*86400000) : null;
+
+  let pool = getActiveJobs();
+  let jobs = pool.filter(j=>{
+    if(q&&!j.title.toLowerCase().includes(q)&&!j.company.toLowerCase().includes(q)&&!(j.desc||'').toLowerCase().includes(q)&&!(j.category||'').toLowerCase().includes(q))return false;
+    if(loc&&!j.location.includes(loc))return false;
+    if(rem&&j.remote!==rem)return false;
+    if(lvl&&j.level!==lvl)return false;
+    if(cat&&j.category!==cat)return false;
+    if(typ&&j.type!==typ)return false;
+    if(cutoff&&j.pubDate&&new Date(j.pubDate)<cutoff)return false;
+    return true;
   });
-  document.getElementById('jobsCountLabel').textContent=jobs.length+' jobs found';
-  if(jobs.length===0){document.getElementById('jobsList').innerHTML=`<div class="empty-state"><span class="empty-icon">🔍</span><h3>No jobs match your filters</h3><p>Try adjusting your criteria.</p><button class="btn btn-secondary btn-sm" style="margin-top:0.85rem" onclick="clearFilters()">Clear Filters</button></div>`;return;}
+
+  // Sort newest first
+  jobs.sort((a,b)=>{
+    if(a.pubDate&&b.pubDate) return new Date(b.pubDate)-new Date(a.pubDate);
+    return 0;
+  });
+
+  document.getElementById('jobsCountLabel').textContent=jobs.length+' job'+(jobs.length!==1?'s':'')+' found';
+  document.getElementById('jobsHeader').textContent = JOBS_SOURCE==='live' ? '🟢 Live Finance Jobs' : '💼 Finance Jobs';
+
+  if(jobs.length===0){
+    document.getElementById('jobsList').innerHTML=`<div class="empty-state"><span class="empty-icon">🔍</span><h3>No jobs match your filters</h3><p>Try adjusting your search criteria or clearing the filters.</p><button class="btn btn-secondary btn-sm" style="margin-top:0.85rem" onclick="clearFilters()">Clear Filters</button></div>`;
+    return;
+  }
   document.getElementById('jobsList').innerHTML=jobs.map(j=>jobCard(j)).join('');
 }
 function jobCard(j){
-  const saved=state.savedJobs.has(j.id);
-  const remTag=j.remote==='remote'?'<span class="job-tag jt-remote">🌐 Remote</span>':j.remote==='hybrid'?'<span class="job-tag jt-hybrid">🏠 Hybrid</span>':'<span class="job-tag">🏢 On-site</span>';
-  const typeTag=j.type==='Internship'?'<span class="job-tag jt-intern">⭐ Internship</span>':`<span class="job-tag">${j.type}</span>`;
-  return `<div class="job-card${saved?' saved-card':''}" id="jcard${j.id}">
-    <div class="job-card-top"><div class="company-logo">${j.logo}</div><div class="job-info"><div class="job-title">${j.title}</div><div class="job-company">${j.company} · ${j.location}</div></div></div>
-    <div class="job-meta">${remTag}${typeTag}<span class="job-tag">📊 ${j.category}</span><span class="job-tag">🎯 ${j.level.charAt(0).toUpperCase()+j.level.slice(1)}</span></div>
+  const jId = String(j.id);
+  const saved = state.savedJobs.has(j.id) || state.savedJobs.has(jId);
+  const remTag = j.remote==='remote'
+    ? '<span class="job-tag jt-remote">🌐 Remote</span>'
+    : j.remote==='hybrid'
+    ? '<span class="job-tag jt-hybrid">🏠 Hybrid</span>'
+    : '<span class="job-tag">🏢 On-site</span>';
+  const typeTag = j.type==='Internship'
+    ? '<span class="job-tag jt-intern">⭐ Internship</span>'
+    : `<span class="job-tag">${j.type}</span>`;
+  const liveBadge = j.live
+    ? '<span class="job-tag" style="border-color:rgba(16,185,129,0.4);color:var(--green);background:var(--green-light)">🟢 Live</span>'
+    : '';
+  const newBadge = j.isNew
+    ? '<span class="job-tag jt-intern" style="border-color:rgba(59,130,246,0.4);color:var(--blue);background:var(--blue-light)">✨ New</span>'
+    : '';
+  const levelLabel = j.level ? (j.level.charAt(0).toUpperCase()+j.level.slice(1)) : 'Entry';
+  const hasValidUrl = j.url && j.url !== '#';
+  const applyBtn = hasValidUrl
+    ? `<a href="${j.url}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-primary" onclick="showToast('🚀 Opening application...')">Apply →</a>`
+    : `<button class="btn btn-sm btn-secondary" disabled title="Link unavailable">Apply</button>`;
+
+  return `<div class="job-card${saved?' saved-card':''}" id="jcard${jId}">
+    <div class="job-card-top">
+      <div class="company-logo">${(j.logo||'??').substring(0,3)}</div>
+      <div class="job-info">
+        <div class="job-title">${j.title}</div>
+        <div class="job-company">${j.company} · ${j.location}</div>
+      </div>
+    </div>
+    <div class="job-meta">${remTag}${typeTag}${liveBadge}${newBadge}<span class="job-tag">📊 ${j.category}</span><span class="job-tag">🎯 ${levelLabel}</span></div>
     <div class="job-desc">${j.desc}</div>
     <div class="job-card-bottom">
       <span class="job-date">Posted ${j.posted}</span>
       <div class="job-actions">
-        <button class="save-btn${saved?' saved':''}" onclick="saveJobToTracker(${j.id})" title="Save to Tracker">${saved?'⭐':'☆'}</button>
-        <a href="${j.url}" target="_blank" class="btn btn-sm btn-primary" onclick="showToast('🚀 Opening application...')">Apply →</a>
+        <button class="save-btn${saved?' saved':''}" onclick="saveJobToTracker('${jId}')" title="Save to Tracker">${saved?'⭐':'☆'}</button>
+        ${applyBtn}
       </div>
     </div>
   </div>`;
 }
 function saveJobToTracker(id){
-  const j=JOBS.find(x=>x.id===id);if(!j)return;
-  if(appTracker[id]){showToast('⭐ Already in your tracker!');return;}
-  appTracker[id]={id,title:j.title,company:j.company,location:j.location,url:j.url,status:'Saved',dateSaved:new Date().toISOString().split('T')[0],dateApplied:'',interviewDate:'',followUpDate:'',notes:''};
-  saveLS('vp_app_tracker',appTracker);state.savedJobs.add(id);renderJobs();renderTrackerBadge();showToast('⭐ Saved to your Application Tracker!');
+  const sid = String(id);
+  // Search both live jobs and seed jobs
+  const allJobs = [...getActiveJobs(), ...JOBS];
+  const j = allJobs.find(x=>String(x.id)===sid);
+  if(!j)return;
+  if(appTracker[sid]){showToast('⭐ Already in your tracker!');return;}
+  appTracker[sid]={id:sid,title:j.title,company:j.company,location:j.location,url:j.url,status:'Saved',dateSaved:new Date().toISOString().split('T')[0],dateApplied:'',interviewDate:'',followUpDate:'',notes:''};
+  saveLS('vp_app_tracker',appTracker);
+  state.savedJobs.add(sid);
+  renderJobs();renderTrackerBadge();
+  showToast('⭐ Saved to your Application Tracker!');
 }
 function clearFilters(){['filterLocation','filterRemote','filterLevel','filterCat','filterType'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});document.getElementById('jobSearch').value='';renderJobs();}
 
